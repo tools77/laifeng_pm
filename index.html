@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+		<title>排名</title>
+	</head>
+	<body>
+		<div>
+			<h1>主播</h1>
+			<input type="text" id='zhubo_r' name="zhubo_r" placeholder="请输入房间号" value="" />
+			<button onclick='zhubo_r_select();'>查询</button>
+			<h4>名字：<span style="color: red;" id="zhubo_n"><span></h4>
+			<h4>排名：<span style="color: red;" id="zhubo_pm"><span></h4>
+			<h4>票数：<span style="color: red;" id="zhubo_q"><span></h4>
+			<input type="text" id='zhubo_pm_input' name="zhubo_pm_input" placeholder="请输入排名" value="" />
+			<button onclick='zhubo_pm_select();'>查询</button>
+			<h4>名字：<span style="color: red;" id="zhubo_pm_n"><span></h4>
+			<h4>房间号：<span style="color: red;" id="zhubo_pm_r"><span></h4>
+			<h4>票数：<span style="color: red;" id="zhubo_pm_q"><span></h4>
+			<h4>排名：<span style="color: red;" id="zhubo_pm_pm"><span></h4>
+		</div>
+		<hr />
+		
+		<script type="text/javascript">
+			//主播房间号查询
+			function zhubo_r_select(){
+				let zhubo_r=$('#zhubo_r')[0].value;
+				// console.log(zhubo_r)
+				$.ajax({
+					url:'zhubo_r.php',
+					type:'post',
+					dataType:'json',
+					data:{
+						'zhubo_r':zhubo_r
+					},
+					beforeSend:function(XMLHttpRequest){
+						$('#zhubo_n')[0].innerText='处理中...';
+						$('#zhubo_pm')[0].innerText='处理中...';
+						$('#zhubo_q')[0].innerText='处理中...';
+					}, 
+					success:function(result){
+						// console.log(111);
+						console.log(result);
+						if(result.zhubo_arr_status){
+							console.log('111');
+							$('#zhubo_n')[0].innerText=result.zhubo_arr.n;
+							$('#zhubo_pm')[0].innerText=result.zhubo_arr.pm;
+							$('#zhubo_q')[0].innerText=result.zhubo_arr.q;
+						}
+						else{
+							$('#zhubo_n')[0].innerText='暂无数据';
+							$('#zhubo_pm')[0].innerText='暂无数据';
+							$('#zhubo_q')[0].innerText='暂无数据';
+							alert('房间号错误或该主播没有进前1200名');
+						}
+						// console.log(result.zhubo_arr);
+					}
+				})
+			}
+			//主播排名查询
+			function zhubo_pm_select(){
+				let zhubo_pm_input=$('#zhubo_pm_input')[0].value;
+				// console.log(zhubo_r)
+				if(zhubo_pm_input>=1&&zhubo_pm_input<=1200){
+					$.ajax({
+						url:'zhubo_pm.php',
+						type:'post',
+						dataType:'json',
+						data:{
+							'zhubo_pm_input':zhubo_pm_input
+						},
+						beforeSend:function(XMLHttpRequest){
+							$('#zhubo_pm_n')[0].innerText='处理中...';
+							$('#zhubo_pm_r')[0].innerText='处理中...';
+							$('#zhubo_pm_q')[0].innerText='处理中...';
+							$('#zhubo_pm_pm')[0].innerText='处理中...';
+						}, 
+						success:function(result){
+							// console.log(111);
+							console.log(result);
+							if(result.zhubo_arr_status){
+								console.log('111');
+								$('#zhubo_pm_n')[0].innerText=result.zhubo_arr.n;
+								$('#zhubo_pm_r')[0].innerText=result.zhubo_arr.r;
+								$('#zhubo_pm_q')[0].innerText=result.zhubo_arr.q;
+								$('#zhubo_pm_pm')[0].innerText=result.zhubo_arr.pm;
+							}
+							else{
+								$('#zhubo_pm_n')[0].innerText='暂无数据';
+								$('#zhubo_pm_r')[0].innerText='暂无数据';
+								$('#zhubo_pm_q')[0].innerText='暂无数据';
+								$('#zhubo_pm_pm')[0].innerText='暂无数据';
+								alert('数据错误');
+							}
+							// console.log(result.zhubo_arr);
+						}
+					});
+				}
+				else{
+					alert('排名需要在1到1200之间');
+					$('#zhubo_pm_input')[0].value='';
+				}
+			}
+		</script>
+	</body>
+</html>
